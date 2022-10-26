@@ -1,8 +1,11 @@
 import json
 from netfuncs import *
 
-def get(path):
-  return read_routers(path)['routers'], read_routers(path)['src-dest']
+def get_routers_data(path):
+  return read_routers(path)['routers']
+
+def get_src_dest_pairs(path):
+  return read_routers(path)['src-dest']
 
 def display_pairs(pairs):
   print ("   source              dest")
@@ -11,7 +14,6 @@ def display_pairs(pairs):
 
 def main(argv):
   routers, pairs = get(argv[1])
-
   display_pairs(pairs)
 
 if __name__ == "__main__":
