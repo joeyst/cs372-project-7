@@ -17,7 +17,7 @@ class Router:
     self.path = []
     self.path_cost = float('inf')
 
-  def try_conns(router_dict):
+  def get_update_data(router_dict):
     update_data = {
       'conns': [],
       'costs': [],
