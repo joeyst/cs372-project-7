@@ -8,12 +8,27 @@ def get_src_dest_pairs(path):
   return read_routers(path)['src-dest']
 
 class Router:
-  def __init__(ip, conns, conn_weights):
+  def __init__(ip, conns, conn_weights, interfaces):
     self.ip = ip
     self.conns = conns
     self.conn_weights = conn_weights
+    self.interfaces = interfaces
     self.path = []
     self.path_cost = float('inf')
+
+  def try_conns(router_dict):
+    outdated_conns = []
+    outdated_conn_weights = []
+    outdated_interfaces = []
+
+    for conn, weight, interface in zip(self.conns, self.conn_weights, self.interfaces):
+      if self.faster_path(router_dict[conn].path_cost):
+        outdated_conns.append(conn)
+        outdated_conn_weights.append(weight)
+        outdated_interfaces.append(interface)
+    
+    return zip(outdated_conns, outdated_conn_weights, outdated_interfaces)
+
 
 def display_pairs(pairs):
   print ("   source              dest")
