@@ -18,17 +18,21 @@ class Router:
     self.path_cost = float('inf')
 
   def try_conns(router_dict):
-    outdated_conns = []
-    outdated_conn_weights = []
-    outdated_interfaces = []
+    update_data = {
+      'conns': [],
+      'costs': [],
+      'paths': [],
+      'interfaces': []
+    }
 
     for conn, weight, interface in zip(self.conns, self.conn_weights, self.interfaces):
       if self.faster_path(router_dict[conn].path_cost):
-        outdated_conns.append(conn)
-        outdated_conn_weights.append(weight)
-        outdated_interfaces.append(interface)
+        update_data['conns'].append(conn)
+        update_data['costs'].append(self.path_cost + weight)
+        update_data['paths'].append(self.path + [conn])
+        update_data['interfaces'].append(self.interfaces)
     
-    return zip(outdated_conns, outdated_conn_weights, outdated_interfaces)
+    return update_data
 
   def add_conns(conns_data):
     for conn_data in conns_data.items():
