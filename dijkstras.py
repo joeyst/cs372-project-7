@@ -8,11 +8,11 @@ def get_src_dest_pairs(path):
   return read_routers(path)['src-dest']
 
 class Network:
-  def __init__(routers_dict):
+  def __init__(self, routers_dict):
     self.routers = self.parse_routers_dict(routers_dict)
     self.queue = []
 
-  def parse_routers_dict(routers_dict):
+  def parse_routers_dict(self, routers_dict):
     routers = {}
     for curr, data in routers_dict.items():
       curr_router = Router(curr)
@@ -21,7 +21,7 @@ class Network:
     return routers
 
 class Router:
-  def __init__(ip, conns=[], conn_weights=[], interfaces=[], path_cost=float('inf')):
+  def __init__(self, ip, conns=[], conn_weights=[], interfaces=[], netmasks=[], path_cost=float('inf')):
     self.ip = ip
     self.conns = conns
     self.conn_weights = conn_weights
@@ -30,7 +30,7 @@ class Router:
     self.path = []
     self.path_cost = path_cost
 
-  def get_update_data(router_dict):
+  def get_update_data(self, router_dict):
     update_data = {
       'conns': [],
       'costs': [],
@@ -47,20 +47,20 @@ class Router:
     
     return update_data
 
-  def add_conns(conns_data):
+  def add_conns(self, conns_data):
     for conn_data in conns_data.items():
       self.add_conn(conn_data)
 
-  def add_conn(conn_data):
+  def add_conn(self, conn_data):
     self._assert_lengths()
-    (address, data),  = conn_data.items()
+    address, data  = conn_data
     
     self.conns.append(address)
     self.conn_weights.append(float(data['ad']))
     self.interfaces.append(data['interface'])
     self.netmasks.append(data['netmask'])
 
-  def _assert_lengths():
+  def _assert_lengths(self):
     assert len(self.conns) == len(self.conn_weights) and len(self.conn_weights) == len(self.interfaces) and len(self.interfaces) == len(self.netmasks)
 
 
@@ -71,6 +71,7 @@ def display_pairs(pairs):
 
 def main(argv):
   routers, pairs = get_routers_data(argv[1]), get_src_dest_pairs(argv[1])
+  network = Network(routers)
   display_pairs(pairs)
 
 if __name__ == "__main__":
