@@ -1,5 +1,6 @@
 import json
 from netfuncs import *
+from copy import deepcopy
 
 def get_routers_data(path):
   return read_routers(path)['routers']
@@ -20,8 +21,17 @@ class Network:
       parsed_routers[curr] = curr_router
     return parsed_routers
 
+  def dijk(self, start, finish):
+    self.reset()
+    assert(len(self.queue) == 0)
+
+    self.queue.append(start)
+    while (len(self.queue) != 0):
+      self.next()
+    return self.routers[finish]
+
   def reset(self):
-    for name, router in self.routers:
+    for name, router in self.routers.items():
       self.routers[name].path = []
       self.routers[name].path_cost = float('inf')
 
@@ -29,7 +39,7 @@ class Network:
     assert(len(self.queue) != 0)
     q = self.queue.pop(0)
 
-    update_data = self.routers[q].get_update_data(self.routers.deepcopy())
+    update_data = self.routers[q].get_update_data(deepcopy(self.routers))
     for i in range(len(update_data['conns'])):
       # keeping for a bit in case code doesn't mutate 
       # temp_router           = self.routers[update_data['conns'][i]].deepcopy()
@@ -95,6 +105,8 @@ def display_pairs(pairs):
 def main(argv):
   routers, pairs = get_routers_data(argv[1]), get_src_dest_pairs(argv[1])
   network = Network(routers)
+  network.dijk("10.34.52.1", "10.34.166.1")
+  print(network.routers["10.34.166.1"])
   display_pairs(pairs)
 
 if __name__ == "__main__":
