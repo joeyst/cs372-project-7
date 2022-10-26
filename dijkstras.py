@@ -13,6 +13,7 @@ class Router:
     self.conns = conns
     self.conn_weights = conn_weights
     self.interfaces = interfaces
+    self.netmasks = netmasks
     self.path = []
     self.path_cost = float('inf')
 
@@ -28,6 +29,18 @@ class Router:
         outdated_interfaces.append(interface)
     
     return zip(outdated_conns, outdated_conn_weights, outdated_interfaces)
+
+  def add_conn(conn_data):
+    self._assert_lengths()
+    (address, data),  = conn_data.items()
+    
+    self.conns.append(address)
+    self.conn_weights.append(float(data['ad']))
+    self.interfaces.append(data['interface'])
+    self.netmasks.append(data['netmask'])
+
+  def _assert_lengths():
+    assert len(self.conns) == len(self.conn_weights) and len(self.conn_weights) == len(self.interfaces) and len(self.interfaces) == len(self.netmasks)
 
 
 def display_pairs(pairs):
