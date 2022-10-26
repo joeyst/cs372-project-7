@@ -8,14 +8,14 @@ def get_src_dest_pairs(path):
   return read_routers(path)['src-dest']
 
 class Router:
-  def __init__(ip, conns, conn_weights, interfaces):
+  def __init__(ip, conns, conn_weights, interfaces, path_cost=float('inf')):
     self.ip = ip
     self.conns = conns
     self.conn_weights = conn_weights
     self.interfaces = interfaces
     self.netmasks = netmasks
     self.path = []
-    self.path_cost = float('inf')
+    self.path_cost = path_cost
 
   def get_update_data(router_dict):
     update_data = {
