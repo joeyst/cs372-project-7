@@ -7,6 +7,11 @@ def get_routers_data(path):
 def get_src_dest_pairs(path):
   return read_routers(path)['src-dest']
 
+class Network:
+  def __init__(routers_dict):
+    self.routers = self.parse_routers_dict(routers_dict)
+    self.queue = []
+
 class Router:
   def __init__(ip, conns, conn_weights, interfaces, path_cost=float('inf')):
     self.ip = ip
