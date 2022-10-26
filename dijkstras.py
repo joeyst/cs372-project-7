@@ -30,6 +30,10 @@ class Router:
     
     return zip(outdated_conns, outdated_conn_weights, outdated_interfaces)
 
+  def add_conns(conns_data):
+    for conn_data in conns_data.items():
+      self.add_conn(conn_data)
+
   def add_conn(conn_data):
     self._assert_lengths()
     (address, data),  = conn_data.items()
