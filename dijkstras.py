@@ -171,7 +171,6 @@ class Router:
     if override == False:
       assert len(self.conns) == len(self.conn_weights) and len(self.conn_weights) == len(self.interfaces) and len(self.interfaces) == len(self.netmasks)
 
-
 def display_pairs(pairs):
   print ("   source              dest")
   for source, dest in pairs:
