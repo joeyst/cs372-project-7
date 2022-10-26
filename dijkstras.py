@@ -12,8 +12,16 @@ class Network:
     self.routers = self.parse_routers_dict(routers_dict)
     self.queue = []
 
+  def parse_routers_dict(routers_dict):
+    routers = {}
+    for curr, data in routers_dict.items():
+      curr_router = Router(curr)
+      curr_router.add_conns(data['connections'])
+      routers[curr] = curr_router
+    return routers
+
 class Router:
-  def __init__(ip, conns, conn_weights, interfaces, path_cost=float('inf')):
+  def __init__(ip, conns=[], conn_weights=[], interfaces=[], path_cost=float('inf')):
     self.ip = ip
     self.conns = conns
     self.conn_weights = conn_weights
