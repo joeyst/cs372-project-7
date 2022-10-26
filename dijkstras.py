@@ -13,12 +13,30 @@ class Network:
     self.queue = []
 
   def parse_routers_dict(self, routers_dict):
-    routers = {}
+    parsed_routers = {}
     for curr, data in routers_dict.items():
       curr_router = Router(curr)
       curr_router.add_conns(data['connections'])
-      routers[curr] = curr_router
-    return routers
+      parsed_routers[curr] = curr_router
+    return parsed_routers
+
+  def next(self):
+    assert(len(self.queue) != 0)
+    q = self.queue.pop(0)
+
+    update_data = self.routers[q].get_update_data(self.routers.deepcopy())
+    for i in range(len(update_data['conns'])):
+      # keeping for a bit in case code doesn't mutate 
+      # temp_router           = self.routers[update_data['conns'][i]].deepcopy()
+      # temp_router.path      = update_data['paths'][i]
+      # temp_router.path_cost = float(update_data['costs'][i])
+      # self.routers[update_data['conns'][i]] = temp_router
+
+      curr_conn = update_data['conns'][i]
+      self.routers[curr_conn].path      = update_data['paths'][i]
+      self.routers[curr_conn].path_cost = update_data['costs'][i]
+      if not curr_conn in self.queue:
+        queue.append(curr_conn)
 
 class Router:
   def __init__(self, ip, conns=[], conn_weights=[], interfaces=[], netmasks=[], path_cost=float('inf')):
