@@ -20,6 +20,11 @@ class Network:
       parsed_routers[curr] = curr_router
     return parsed_routers
 
+  def reset(self):
+    for name, router in self.routers:
+      self.routers[name].path = []
+      self.routers[name].path_cost = float('inf')
+
   def next(self):
     assert(len(self.queue) != 0)
     q = self.queue.pop(0)
