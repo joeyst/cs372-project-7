@@ -20,7 +20,7 @@ class Network:
       parsed_routers[curr] = deepcopy(curr_router)
     return parsed_routers
 
-  def dijk(self, start, finish, display=True, verbose=False):
+  def dijk(self, start, finish, interface=False, display=True, verbose=False):
     # get start router name, `Router`, and netmask 
     start_subnet_name = self.find_subnet(start)
     start_subnet_router = self.routers[start_subnet_name]
@@ -42,6 +42,8 @@ class Network:
         print("{:11} {}".format("Sender", start))
         print("{:11} {}".format("Receiver", finish))
         temp_router.display(verbose)
+      if interface:
+        print("{:11} {}".format("Interface", "Local"))
       return temp_router
 
     self.reset()
@@ -75,8 +77,30 @@ class Network:
       print("{:11} {}".format("Sender", start))
       print("{:11} {}".format("Receiver", finish))
       self.routers[finish_router].display(verbose)
+    if interface:
+      print("{:11} {}".format("Interface", self.collect_interfaces(self.routers[finish_router].path, start)))
+    print("\n\n\n")
 
     return self.routers[finish_router]
+
+  def collect_interfaces(self, path, start):
+    interfaces = []
+    if start.split(".")[-1] == "1":
+      index_of_interface = self.routers[start].conns.index(path[0])
+      interfaces.append(self.routers[start].interfaces[index_of_interface])
+    else:
+      interfaces.append((start, "Local"))
+    
+    for i in range(1, len(path)):
+      prev_index = 0
+      if path[i].split(".")[-1] == "1":
+        index_of_interface = self.routers[path[i - 1]].conns.index(path[i])
+        interfaces.append((path[i], self.routers[path[i - 1]].interfaces[index_of_interface]))
+      else:
+        interfaces.append((path[i], "Local"))
+        continue
+
+    return interfaces
 
   def find_subnet(self, ip):
     for name, router in self.routers.items():
@@ -144,7 +168,6 @@ class Router:
       print("")
       print("{:11} {}".format("Connections", self.conns))
       print("{:11} {}".format("Weights",     self.conn_weights))
-    print("\n\n\n")
 
   def subnet(self):
     return value_to_ipv4(ipv4_to_value(self.ip) & get_subnet_mask_value(self.netmask))
@@ -180,7 +203,7 @@ def find_paths(file_path, display=True, verbose=False):
   routers, pairs = get_routers_data(file_path), get_src_dest_pairs(file_path)
   network = Network(routers)
   for [start, destination] in pairs:
-    network.dijk(start, destination, display=True, verbose=False)
+    network.dijk(start, destination, interface=True, display=True, verbose=False)
 
 def main(argv):
   find_paths(argv[1])
